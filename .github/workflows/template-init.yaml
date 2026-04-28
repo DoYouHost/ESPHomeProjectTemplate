@@ -159,10 +159,12 @@ jobs:
           gh issue create \
             --title "Template initialization checklist" \
             --body-file "$BODY_FILE" \
+            --assignee "${{ github.actor }}" \
             --label "template-init" 2>/dev/null || \
           gh issue create \
             --title "Template initialization checklist" \
-            --body-file "$BODY_FILE"
+            --body-file "$BODY_FILE" \
+            --assignee "${{ github.actor }}"
 
       - name: Self-delete this workflow
         if: steps.guard.outputs.skip == 'false'
