@@ -2,12 +2,10 @@
 # Skeleton ESPHome configuration. Rename this file to match `files[0]` in
 # project.yaml and fill in the project-specific configuration.
 #
-# Generate fresh API_KEY / OTA_PASSWORD values before first build:
-#   esphome-keygen
+# Generate a fresh OTA_PASSWORD before first build:
 #   openssl rand -base64 24
 
 substitutions:
-  API_KEY: "REPLACE_WITH_BASE64_KEY"
   OTA_PASSWORD: "REPLACE_WITH_OTA_PASSWORD"
   PROD_MANIFEST_URL: "https://morganmlg.com/ProjectTemplate/manifest.json"
   BETA_MANIFEST_URL: "https://morganmlg.com/ProjectTemplate/manifest-beta.json"
@@ -60,8 +58,14 @@ improv_serial:
 
 api:
   reboot_timeout: 15min
+  # Deliberately empty: with no `key:` the device ships unprovisioned and Home
+  # Assistant sets the encryption key on first connection.
   encryption:
-    key: "${API_KEY}"
+
+provisioning:
+  # The window lives in RAM only, so it reopens on every power cycle - a device
+  # left on a shelf past the timeout needs a reboot, not a reflash.
+  timeout: 15min
 
 ota:
   - platform: esphome

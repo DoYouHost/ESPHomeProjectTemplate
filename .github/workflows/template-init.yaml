@@ -81,19 +81,21 @@ jobs:
           ## 2. ESPHome configuration
 
           - [ ] Rename `esp32-template.yml` to match `files[0]` from `project.yaml`
-          - [ ] Generate fresh secrets in `substitutions`:
-            - [ ] `API_KEY` — base64-encoded 32-byte key for ESPHome native API
-            - [ ] `OTA_PASSWORD` — random password for OTA updates
-
-            Example commands:
+          - [ ] Generate a fresh `OTA_PASSWORD` in `substitutions`:
 
             ```bash
-            # API_KEY (32 random bytes, base64-encoded)
-            openssl rand -base64 32
-
             # OTA_PASSWORD (24 random bytes, base64-encoded)
             openssl rand -base64 24
             ```
+
+            There is no `API_KEY` to generate. `api:` ships with an empty
+            `encryption:` block, so the device boots unprovisioned and Home
+            Assistant sets the key on first connection; `provisioning:`
+            bounds that window.
+
+          - [ ] Adjust the `provisioning:` `timeout:` if 15 minutes does not
+                fit your flashing workflow (the window is RAM-only, so a power
+                cycle reopens it)
           - [ ] Update `substitutions`:
             - [ ] `PROD_MANIFEST_URL` (point at your R2 directory)
             - [ ] `BETA_MANIFEST_URL`

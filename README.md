@@ -17,13 +17,34 @@ and [`DoYouHost/ESPHomeTemplates`](https://github.com/DoYouHost/ESPHomeTemplates
    - `r2_cleanup_days`
 3. Rename the skeleton `esp32-template.yml` to match `files[0]` from
    `project.yaml`, then fill in the project-specific configuration.
-4. Generate fresh `API_KEY` and `OTA_PASSWORD` values in `substitutions`.
+4. Generate a fresh `OTA_PASSWORD` in `substitutions`. There is no API key
+   to generate — see [Provisioning](#provisioning) below.
 5. Update the `dashboard_import.package_import_url` and the manifest URLs
    to point at the new repository / R2 directory.
 6. Reset `version.txt` to your starting version (e.g. `2026.1.0`) and
    start a fresh `CHANGELOG.md`.
 7. In `static/_config.yaml`, leave `title:` as-is — it is rewritten by the
    `publish-pages` workflow using `project_name` from `project.yaml`.
+
+## Provisioning
+
+The skeleton config ships **unprovisioned**: `api:` carries an empty
+`encryption:` block (no `key:`) and `wifi:` carries no station credentials,
+so both are set on first connection instead of being baked into the
+firmware. `provisioning:` bounds how long the device accepts that setup.
+
+Consequences worth knowing:
+
+- The window lives in RAM only. Once it expires the device stops accepting
+  provisioning until it is power-cycled — no reflash needed.
+- Reboot timeouts are suppressed while the device is unprovisioned, so it
+  will not silently reboot (and reopen the window) mid-setup.
+- Putting a `key:` back under `encryption:`, or `ssid:`/`password:` under
+  `wifi:`, makes the window pointless; ESPHome emits a warning at compile
+  time when it sees that combination.
+- Requires ESPHome **2026.7.0 or newer** — `provisioning:` does not exist
+  in earlier releases, so `esphome_version` in `project.yaml` must not be
+  pinned below it.
 
 ## Required secrets
 
@@ -49,7 +70,7 @@ Workflows only build when explicitly requested:
   triggers a Pages rebuild.
 - `publish-pages.yaml` — builds and deploys the GitHub Pages landing page
   with embedded firmware downloads.
-- `r2-cleanup.yaml` — daily cleanup of stale artifacts in R2.
+- `r2-cleanup.yaml` — weekly cleanup of stale artifacts in R2.
 
 ## How shared parameters work
 

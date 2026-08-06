@@ -12,7 +12,8 @@ project_name: ProjectTemplate
 r2_directory: ProjectTemplate
 
 # ESPHome version pinned for this project's builds.
-esphome_version: "2026.4.3"
+# Floor is 2026.7.0 - `provisioning:` does not exist before that.
+esphome_version: "2026.7.4"
 
 # ESPHome YAML files to compile. All entries are built and published
 # together under one release.
